@@ -12,5 +12,6 @@ Route::get('students', [\App\Http\Controllers\API\StudentController::class, 'ind
 Route::post('students', [\App\Http\Controllers\API\StudentController::class, 'store']);
 Route::get('students/{id}', [\App\Http\Controllers\API\StudentController::class, 'show']);
 Route::get('students/{id}/edit', [\App\Http\Controllers\API\StudentController::class, 'edit']);
+Route::get('students/{id}/edit', [\App\Http\Controllers\API\StudentController::class, 'update']);
 
 

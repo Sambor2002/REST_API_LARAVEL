@@ -90,4 +90,40 @@ class StudentController extends Controller
             ], 404);
         }
     }
+
+    public function update(Request $request, int $id){
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(),[
+            'name'=>'required|string|max:191',
+            'course'=>'required|string|max:191',
+            'email'=>'required|email|max:191',
+            'phone'=>'required|digits:9',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'status' => 422,
+                'error' => $validator->messages()
+            ],422);
+        }else{
+            $student = Student::find($id);
+
+            if($student){
+                $student->update([
+                    'name' => $request->name,
+                    'course' => $request->course,
+                    'email' => $request->email,
+                    'phone' => $request->phone
+                ]);
+
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Student updated succsessfully"
+                ],200);
+            }else{
+                return response()->json([
+                    'status' => 404,
+                    'message' => "Error - something went wrong"
+                ],404);
+            }
+        }
+    }
 }
