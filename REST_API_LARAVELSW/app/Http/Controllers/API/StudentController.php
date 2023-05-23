@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\ValidateSignature;
-use App\Models\Student;
+use App\Models\People;
 use Dotenv\Validator;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     public function index (){
-        $students = Student::all();
+        $students = People::all();
 
         if($students->count() > 0){
             return response() -> json([
@@ -31,9 +31,10 @@ class StudentController extends Controller
     public function store(Request $request){
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(),[
             'name'=>'required|string|max:191',
-            'course'=>'required|string|max:191',
             'email'=>'required|email|max:191',
             'phone'=>'required|digits:9',
+            'street'=>'required|string|max:191',
+            'country'=>'required|string|max:191',
         ]);
         if($validator->fails()){
             return response()->json([
@@ -41,17 +42,18 @@ class StudentController extends Controller
                 'error' => $validator->messages()
             ],422);
         }else{
-            $student = Student::create([
+            $student = People::create([
                 'name' => $request->name,
-                'course' => $request->course,
                 'email' => $request->email,
-                'phone' => $request->phone
+                'phone' => $request->phone,
+                'street' => $request->street,
+                'country' => $request->country
             ]);
 
             if($student){
                 return response()->json([
                     'status' => 200,
-                    'message' => "Student added succsessfully"
+                    'message' => "People added succsessfully"
                 ],200);
             }else{
                 return response()->json([
@@ -63,7 +65,7 @@ class StudentController extends Controller
     }
 
     public function show($id){
-        $student = Student::find($id);
+        $student = People::find($id);
         if($student){
             return response()->json([
                 'status' => 200,
@@ -77,7 +79,7 @@ class StudentController extends Controller
         }
     }
     public function edit($id){
-        $student = Student::find($id);
+        $student = People::find($id);
         if($student){
             return response()->json([
                 'status' => 200,
@@ -94,9 +96,10 @@ class StudentController extends Controller
     public function update(Request $request, int $id){
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(),[
             'name'=>'required|string|max:191',
-            'course'=>'required|string|max:191',
             'email'=>'required|email|max:191',
             'phone'=>'required|digits:9',
+            'street'=>'required|string|max:191',
+            'country'=>'required|string|max:191',
         ]);
         if($validator->fails()){
             return response()->json([
@@ -104,19 +107,20 @@ class StudentController extends Controller
                 'error' => $validator->messages()
             ],422);
         }else{
-            $student = Student::find($id);
+            $student = People::find($id);
 
             if($student){
                 $student->update([
                     'name' => $request->name,
-                    'course' => $request->course,
                     'email' => $request->email,
-                    'phone' => $request->phone
+                    'phone' => $request->phone,
+                    'street' => $request->street,
+                    'country' => $request->country
                 ]);
 
                 return response()->json([
                     'status' => 200,
-                    'message' => "Student updated succsessfully"
+                    'message' => "People updated successfully"
                 ],200);
             }else{
                 return response()->json([
@@ -125,5 +129,23 @@ class StudentController extends Controller
                 ],404);
             }
         }
+    }
+
+    public function delete($id){
+        $student = People::find($id);
+
+        if($student){
+            $student->delete();
+            return response()->json([
+                'status' => 200,
+                'message' => "People deleted successfully"
+            ],200);
+        }else{
+            return response()->json([
+                'status' => 404,
+                'message' => "Error - something went wrong"
+            ],404);
+        }
+
     }
 }
